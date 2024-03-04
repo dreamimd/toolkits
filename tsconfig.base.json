@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": [],
+    "baseUrl": ".",
+    "rootDir": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "paths": {
+      "@dreamimd/imd-parser": ["packages/imd-parser/src/index.ts"],
+      "@dreamimd/imd-fetcher": ["packages/imd-fetcher/src/index.ts"]
+    },
+    "resolveJsonModule": true,
+    "types": [],
+    "allowJs": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "outDir": "dist",
+    "removeComments": false,
+    "sourceMap": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": false
+  }
+}

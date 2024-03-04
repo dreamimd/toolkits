@@ -1,0 +1,9 @@
+{
+  "name": "@dreamimd/imd-parser",
+  "type": "module",
+  "version": "0.0.0",
+  "dependencies": {
+    "@types/pako": "^2.0.3",
+    "pako": "^2.1.0"
+  }
+}
