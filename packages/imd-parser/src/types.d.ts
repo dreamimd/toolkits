@@ -1,4 +1,4 @@
-export interface RMPData {
+export interface RmpMap {
   /**
    * 意义暂时不明
    * @default 'BNDQ'
@@ -24,10 +24,10 @@ export interface RMPData {
   durationtime: number
 
   /** 轨道信息 */
-  tracks: RMPTrack[]
+  tracks: RmpTrack[]
 }
 
-export interface RMPTrack {
+export interface RmpTrack {
   /**
    * 轨道编号，从 3 开始，0-2 保留。
    *
@@ -40,10 +40,10 @@ export interface RMPTrack {
   track: number
 
   /** 该轨道上的按键 */
-  note: RMPNote[]
+  note: RmpNote[]
 }
 
-export interface RMPNote {
+export interface RmpNote {
   idx: number
   tick: number
   key: number
@@ -55,4 +55,16 @@ export interface RMPNote {
   attr: number
   time: number
   time_dur: number
+}
+
+/** Imd 基本信息，从文件名中解析出 */
+export interface ImdBasic {
+  /** 谱面名称 */
+  name: string
+
+  /** 谱面难度 */
+  difficulty: string
+
+  /** 谱面轨道数 */
+  keyNum: number
 }

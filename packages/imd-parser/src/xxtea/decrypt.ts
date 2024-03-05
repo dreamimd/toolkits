@@ -13,15 +13,18 @@ export function decrypt(data: string, key: string) {
     return data
 
   key = utf8Encode(key)
-  return utf8Decode(
-    toBinaryString(
-      decryptUint32Array(
-        toUint32Array(data, false),
-        fixk(toUint32Array(key, false)),
-      ),
-      true,
-    ) || '',
+  const binaryString = toBinaryString(
+    decryptUint32Array(
+      toUint32Array(data, false),
+      fixk(toUint32Array(key, false)),
+    ),
+    true,
   )
+
+  if (!binaryString)
+    throw new Error('Decrypt Error!')
+
+  return utf8Decode(binaryString)
 }
 
 export function decryptFromBase64(data: string, key: string) {

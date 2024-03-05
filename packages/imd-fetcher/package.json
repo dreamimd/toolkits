@@ -1,3 +1,11 @@
 {
-  "name": "@dreamimd/imd-fetcher"
+  "name": "@dreamimd/imd-fetcher",
+  "type": "module",
+  "version": "0.0.0",
+  "dependencies": {
+    "@dreamimd/imd-parser": "workspace:^",
+    "@types/yargs": "^17.0.32",
+    "axios": "^1.6.7",
+    "yargs": "^17.7.2"
+  }
 }

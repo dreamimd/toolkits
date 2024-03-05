@@ -14,14 +14,18 @@ export function encrypt(data: string, key: string) {
   data = utf8Encode(data)
   key = utf8Encode(key)
 
-  // 注意，解码失败会返回空串
-  return toBinaryString(
+  const binaryString = toBinaryString(
     encryptUint32Array(
       toUint32Array(data, true),
       fixk(toUint32Array(key, false)),
     ),
     false,
-  ) || ''
+  )
+
+  if (!binaryString)
+    throw new Error('Encrypt Error!')
+
+  return binaryString
 }
 
 export function encryptToBase64(data: string, key: string) {

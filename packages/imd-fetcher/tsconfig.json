@@ -1,0 +1,7 @@
+{
+  "references": [
+    { "path": "./tsconfig.vitest.json" },
+    { "path": "./tsconfig.src.json" }
+  ],
+  "files": []
+}
