@@ -4,18 +4,10 @@ import { hideBin } from 'yargs/helpers'
 import type { FetcherOptions } from './imd-fetcher'
 import { ImdFetcher } from './imd-fetcher'
 
-interface Options extends Required<FetcherOptions> {
-  /** 是否清空输出目录 */
-  clean: boolean
-
-  /** 下载指定谱面，空串代表下载全部谱面 */
-  target: string
-}
-
 const defaultOptions = ImdFetcher.defaultFetcherOptions()
 
 yargs(hideBin(process.argv))
-  .command<Options>('*', '下载节奏大师谱面', (y) => {
+  .command<Required<FetcherOptions>>('*', '下载节奏大师谱面', (y) => {
     y
       .option('dir', {
         desc: '下载输出目录',
@@ -30,14 +22,14 @@ yargs(hideBin(process.argv))
       .option('clean', {
         desc: '是否清空输出目录',
         type: 'boolean',
-        default: false,
+        default: defaultOptions.clean,
       })
       .option('target', {
         desc: '下载指定谱面，空串代表下载全部谱面',
         type: 'string',
-        default: '',
+        default: defaultOptions.target,
       })
   }, async (args) => {
-    // const imdFetcher = new ImdFetcher(args)
+    const imdFetcher = new ImdFetcher(args)
   })
   .parse()

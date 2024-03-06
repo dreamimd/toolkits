@@ -36,25 +36,25 @@ export class IMD implements ImdBasic {
   static from(filename: string, data?: string | RmpMap) {
     const basic = resolveFilename(filename)
     if (!data)
-      return IMD.initRmp(basic)
+      return IMD._initRmp(basic)
 
     if (typeof data === 'object')
-      return IMD.fromRmpMap(basic, data)
+      return IMD._fromRmpMap(basic, data)
 
     if (basic.ext === 'imd')
-      return IMD.fromImdRaw(basic, data)
+      return IMD._fromImdRaw(basic, data)
 
     if (basic.ext === 'rmp')
-      return IMD.fromRmpRaw(basic, data)
+      return IMD._fromRmpRaw(basic, data)
 
-    return IMD.fromRmpJson(basic, data)
+    return IMD._fromRmpJson(basic, data)
   }
 
   /** 从 .rmp 文件原始加密字符串生成谱面实例 */
-  private static fromRmpRaw(basic: ImdBasic, raw: string) {
+  private static _fromRmpRaw(basic: ImdBasic, raw: string) {
     const filePath = basicToFilePath(basic)
     const rmpJson = decryptRmp(raw, filePath)
-    return IMD.fromRmpJson(basic, rmpJson)
+    return IMD._fromRmpJson(basic, rmpJson)
   }
 
   /**
@@ -62,20 +62,20 @@ export class IMD implements ImdBasic {
    *
    * 这里为了兼容浏览器端，不使用 Node.js 的 Buffer
    */
-  private static fromImdRaw(basic: ImdBasic, raw: string) {
+  private static _fromImdRaw(basic: ImdBasic, raw: string) {
 
   }
 
-  private static fromRmpJson(basic: ImdBasic, json: string) {
+  private static _fromRmpJson(basic: ImdBasic, json: string) {
     const map = JSON.parse(json) as RmpMap
-    return IMD.fromRmpMap(basic, map)
+    return IMD._fromRmpMap(basic, map)
   }
 
-  private static fromRmpMap(basic: ImdBasic, map: RmpMap) {
+  private static _fromRmpMap(basic: ImdBasic, map: RmpMap) {
     return new IMD(basic, map)
   }
 
-  private static initRmp(basic: ImdBasic) {
+  private static _initRmp(basic: ImdBasic) {
     const map: RmpMap = {
       signature: 'BNDQ',
       version: '',
@@ -91,7 +91,7 @@ export class IMD implements ImdBasic {
         note: [],
       })
     }
-    return IMD.fromRmpMap(basic, map)
+    return IMD._fromRmpMap(basic, map)
   }
 
   /** 谱面数据对象 */
