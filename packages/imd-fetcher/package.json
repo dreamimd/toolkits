@@ -2,6 +2,9 @@
   "name": "@dreamimd/imd-fetcher",
   "type": "module",
   "version": "0.0.0",
+  "scripts": {
+    "start": "tsx --tsconfig tsconfig.src.json src/main.ts"
+  },
   "dependencies": {
     "@dreamimd/imd-parser": "workspace:^",
     "@types/yargs": "^17.0.32",

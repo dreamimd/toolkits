@@ -48,15 +48,3 @@ export function basicToFilename(options: ImdBasic, ext?: string) {
     result += `.${ext}`
   return result
 }
-
-/**
- * 根据谱面基本信息生成谱面路径，谱面路径的用途之一就是生成加密盐值
- *
- * 路径实例：please/please_4k_hd
- * @param options 基本信息
- * @returns 谱面路径
- */
-export function basicToFilePath(options: ImdBasic) {
-  const { name, keyNum, difficulty } = options
-  return `${name}/${name}_${keyNum}k_${difficulty}`
-}

@@ -1,6 +1,5 @@
 import type { ImdBasic, RmpMap } from './types'
 import {
-  basicToFilePath,
   basicToFilename,
   decryptRmp,
   encryptRmp,
@@ -52,8 +51,8 @@ export class IMD implements ImdBasic {
 
   /** 从 .rmp 文件原始加密字符串生成谱面实例 */
   private static _fromRmpRaw(basic: ImdBasic, raw: string) {
-    const filePath = basicToFilePath(basic)
-    const rmpJson = decryptRmp(raw, filePath)
+    const filename = basicToFilename(basic)
+    const rmpJson = decryptRmp(raw, filename)
     return IMD._fromRmpJson(basic, rmpJson)
   }
 
@@ -113,14 +112,9 @@ export class IMD implements ImdBasic {
     return basicToFilename(this)
   }
 
-  /** 谱面的路径字符串 */
-  get path() {
-    return basicToFilePath(this)
-  }
-
   /** 加密盐值 */
   get salt() {
-    return getSalt(this.path)
+    return getSalt(this.filename)
   }
 
   constructor(options: ImdBasic, map: RmpMap) {
@@ -134,7 +128,7 @@ export class IMD implements ImdBasic {
   }
 
   toRmpRaw() {
-    return encryptRmp(this.toRmpJson(), this.path)
+    return encryptRmp(this.toRmpJson(), this.filename)
   }
 
   toImdRaw() {

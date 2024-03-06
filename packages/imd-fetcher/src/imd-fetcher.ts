@@ -10,7 +10,7 @@ import { cwd } from 'node:process'
 import { Agent } from 'node:https'
 import { zip } from 'compressing'
 import axios from 'axios'
-import { IMD, decryptFromBase64 } from '@dreamimd/imd-parser'
+import { IMD, decryptCommon } from '@dreamimd/imd-parser'
 import {
   isExist,
   mapFilePath,
@@ -176,9 +176,8 @@ export class ImdFetcher {
 
       const configPath = resolve(this.workspace, 'mrock_song_client.json')
       const buffer = await readFile(configPath, 'binary')
-      let res = decryptFromBase64(buffer, this._version?.hash || '')
-      console.log('11111', res)
-      res = unescape(res.replace(/\\u/g, '%u'))
+      const res = decryptCommon(buffer, this._version?.hash || '')
+      // res = unescape(res.replace(/\\u/g, '%u'))
       await writeFile(decryptConfigPath, res, 'utf-8')
     }
 
@@ -270,6 +269,7 @@ export class ImdFetcher {
 
     const fullname = `LV${level}.${m_szSongName}`.replace(/[?*"\/:|,\\<>]/g, '')
 
+    this.log('log', '----------------------------------------------------------------')
     this.log('log', `正在处理谱面：${fullname}`)
 
     const errHandler = (sign: string, err: unknown) => {

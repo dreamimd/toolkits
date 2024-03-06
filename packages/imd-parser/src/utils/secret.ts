@@ -5,12 +5,39 @@ import { decryptFromBase64, encryptToBase64 } from '../xxtea'
 /**
  * 解密 .rmp 文件的原始字符串，生成 json 字符串
  * @param raw .rmp 原始字符串
- * @param filePath 谱面路径，用于生成加密盐值，例如：please/please_4k_hd
+ * @param mapName 谱面名称，用于生成加密盐值，例如：please_4k_hd
  * @returns json 字符串
  */
-export function decryptRmp(raw: string, filePath: string) {
-  const salt = getSalt(filePath)
-  const decryptData = decryptFromBase64(raw, salt)
+export function decryptRmp(raw: string, mapName: string) {
+  const salt = getSalt(mapName)
+  return decryptCommon(raw, salt)
+}
+
+/**
+ * 将 json 字符串加密回 .rmp 文件原始字符串
+ * @param data json 字符串
+ * @param mapName 谱面名称，用于生成加密盐值，例如：please_4k_hd
+ * @returns .rmp 文件原始字符串
+ */
+export function encryptRmp(data: string, mapName: string) {
+  const charCodeArray = new Uint8Array(data.length)
+  for (let i = 0; i < data.length; ++i)
+    charCodeArray[i] = data.charCodeAt(i)
+
+  const defalted = deflate(charCodeArray, { memLevel: 9 })
+  const dataToEncrypt = arrayBufferToBase64(defalted)
+  const salt = getSalt(mapName)
+  return encryptToBase64(dataToEncrypt, salt)
+}
+
+/**
+ * 节奏大师标准 base64 解密流程，获得 json 字符串
+ * @param raw 原始字符串
+ * @param key 解密盐值
+ * @returns json 字符串
+ */
+export function decryptCommon(raw: string, key: string) {
+  const decryptData = decryptFromBase64(raw, key)
   const arrayBuffer = base64ToArrayBuffer(decryptData)
   const inflated = inflate(arrayBuffer)
 
@@ -23,23 +50,6 @@ export function decryptRmp(raw: string, filePath: string) {
   return result
 }
 
-/**
- * 将 json 字符串加密回 .rmp 文件原始字符串
- * @param data json 字符串
- * @param filePath 谱面路径，用于生成加密盐值，例如：please/please_4k_hd
- * @returns .rmp 文件原始字符串
- */
-export function encryptRmp(data: string, filePath: string) {
-  const charCodeArray = new Uint8Array(data.length)
-  for (let i = 0; i < data.length; ++i)
-    charCodeArray[i] = data.charCodeAt(i)
-
-  const defalted = deflate(charCodeArray, { memLevel: 9 })
-  const dataToEncrypt = arrayBufferToBase64(defalted)
-  const salt = getSalt(filePath)
-  return encryptToBase64(dataToEncrypt, salt)
-}
-
 const SRECRET_SALT = 'RMP4TT3RN'
 
 /**
@@ -49,13 +59,13 @@ const SRECRET_SALT = 'RMP4TT3RN'
  *
  * SECRET = RMP4TT3RN
  *
- * 谱面路径 = please/please_4k_hd
+ * 谱面路径 = please_4k_hd
  *
- * 加密盐值 = RMP4TT3RNplease/please_4k_hd
- * @param filePath 谱面路径
+ * 加密盐值 = RMP4TT3RNplease_4k_hd
+ * @param filePath 谱面名称
  */
-export function getSalt(filePath: string) {
-  return `${SRECRET_SALT}${filePath}`
+export function getSalt(mapName: string) {
+  return `${SRECRET_SALT}${mapName}`
 }
 
 function base64ToArrayBuffer(e: string) {
