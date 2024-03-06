@@ -31,5 +31,6 @@ yargs(hideBin(process.argv))
       })
   }, async (args) => {
     const imdFetcher = new ImdFetcher(args)
+    await imdFetcher.action()
   })
   .parse()

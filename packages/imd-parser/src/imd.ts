@@ -41,8 +41,8 @@ export class IMD implements ImdBasic {
     if (typeof data === 'object')
       return IMD._fromRmpMap(basic, data)
 
-    if (basic.ext === 'imd')
-      return IMD._fromImdRaw(basic, data)
+    // if (basic.ext === 'imd')
+    //   return IMD._fromImdRaw(basic, data)
 
     if (basic.ext === 'rmp')
       return IMD._fromRmpRaw(basic, data)

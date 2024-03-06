@@ -6,6 +6,7 @@
     "@dreamimd/imd-parser": "workspace:^",
     "@types/yargs": "^17.0.32",
     "axios": "^1.6.7",
+    "compressing": "^1.10.0",
     "yargs": "^17.7.2"
   }
 }
