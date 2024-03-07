@@ -11,12 +11,7 @@ import { Agent } from 'node:https'
 import { zip } from 'compressing'
 import axios from 'axios'
 import { IMD, decryptCommon } from '@dreamimd/imd-parser'
-import {
-  isExist,
-  mapFilePath,
-  mp3FilePath,
-  thumbFilePath,
-} from './utils'
+import { isExist } from './utils'
 import type { SongData, VersionData } from './types'
 
 export interface FetcherOptions {
@@ -208,19 +203,17 @@ export class ImdFetcher {
     if (level <= 0)
       return
 
-    const mapPath = mapFilePath(path, keyNum, difficulty)
-    const rmpPath = `${mapPath}.rmp`
-    const url = `/SongRes/song/${rmpPath}`
-    const localPath = resolve(this.songsDir, fullname, rmpPath)
+    const mapName = `${path}_${keyNum}k_${difficulty}`
+    const url = `/SongRes/song/${path}/${mapName}.rmp`
+    const localPath = resolve(this.songsDir, fullname, `${mapName}.rmp`)
     await this.download(url, localPath)
 
-    const jsonPath = `${mapPath}.json`
-    const jsonLocalPath = resolve(this.songsDir, fullname, jsonPath)
+    const jsonLocalPath = resolve(this.songsDir, fullname, `${mapName}.json`)
     const isJsonExist = await isExist(jsonLocalPath)
     if (!isJsonExist) {
       this.log('log', `正在生成 json 谱面：${jsonLocalPath}`)
       const rmpRaw = await readFile(localPath, 'utf-8')
-      const imd = IMD.from(rmpPath, rmpRaw)
+      const imd = IMD.from(localPath, rmpRaw)
       await writeFile(jsonLocalPath, imd.toRmpJson())
     }
     else {
@@ -229,16 +222,15 @@ export class ImdFetcher {
   }
 
   private async resolveMp3Download(fullname: string, path: string) {
-    const mp3Path = mp3FilePath(path)
-    const url = `/SongRes/song/${mp3Path}`
-    const localPath = resolve(this.songsDir, fullname, mp3Path)
+    const url = `/SongRes/song/${path}/${path}.mp3`
+    const localPath = resolve(this.songsDir, fullname, `${path}.mp3`)
     await this.download(url, localPath)
   }
 
   private async resolveThumbDownload(fullname: string, path: string) {
-    const thumbPath = thumbFilePath(path)
-    const url = `/SongRes/song/${thumbPath}`
-    const localPath = resolve(this.songsDir, fullname, thumbPath)
+    const thumbName = `${path}_thumb.jpg`
+    const url = `/SongRes/song/${path}/${thumbName}`
+    const localPath = resolve(this.songsDir, fullname, thumbName)
     await this.download(url, localPath)
   }
 

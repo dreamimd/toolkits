@@ -62,7 +62,7 @@ const SRECRET_SALT = 'RMP4TT3RN'
  * 谱面路径 = please_4k_hd
  *
  * 加密盐值 = RMP4TT3RNplease_4k_hd
- * @param filePath 谱面名称
+ * @param mapName 谱面名称
  */
 export function getSalt(mapName: string) {
   return `${SRECRET_SALT}${mapName}`
