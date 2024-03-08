@@ -18,6 +18,9 @@
   "scripts": {
     "build": "unbuild"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "dependencies": {
     "@types/pako": "^2.0.3",
     "pako": "^2.1.0"
