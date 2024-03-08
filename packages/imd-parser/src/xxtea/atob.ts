@@ -11,7 +11,7 @@ const BASE64_DECODE_CHARS = [
   41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1,
 ]
 
-export function xxatob(str: string) {
+export function atob(str: string) {
   const len = str.length
   if (len % 4 !== 0)
     return ''

@@ -1,6 +1,6 @@
 const BASE64_ENCODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('')
 
-export function xxbtoa(str: string) {
+export function btoa(str: string) {
   let len = str.length
   const r = len % 3
   len = len - r

@@ -1,6 +1,11 @@
 /** 加密盐值前缀 */
 import { deflate, inflate } from 'pako'
-import { decryptFromBase64, encryptToBase64 } from '../xxtea'
+import {
+  atob,
+  btoa,
+  decryptFromBase64,
+  encryptToBase64,
+} from '../xxtea'
 
 /**
  * 解密 .rmp 文件的原始字符串，生成 json 字符串
