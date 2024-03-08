@@ -19,7 +19,8 @@
     "build": "unbuild"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "dependencies": {
     "@types/pako": "^2.0.3",
