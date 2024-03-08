@@ -22,6 +22,10 @@
     "start": "tsx --tsconfig tsconfig.src.json src/main.ts",
     "build": "unbuild"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "dependencies": {
     "@dreamimd/imd-parser": "workspace:^",
     "@types/yargs": "^17.0.32",
