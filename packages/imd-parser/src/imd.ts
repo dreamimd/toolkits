@@ -61,9 +61,9 @@ export class IMD implements ImdBasic {
    *
    * 这里为了兼容浏览器端，不使用 Node.js 的 Buffer
    */
-  private static _fromImdRaw(basic: ImdBasic, raw: string) {
+  // private static _fromImdRaw(basic: ImdBasic, raw: string) {
 
-  }
+  // }
 
   private static _fromRmpJson(basic: ImdBasic, json: string) {
     const map = JSON.parse(json) as RmpMap

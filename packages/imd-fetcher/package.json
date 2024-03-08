@@ -2,8 +2,25 @@
   "name": "@dreamimd/imd-fetcher",
   "type": "module",
   "version": "0.0.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "fetch-imd": "./dist/main.mjs"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "tsx --tsconfig tsconfig.src.json src/main.ts"
+    "start": "tsx --tsconfig tsconfig.src.json src/main.ts",
+    "build": "unbuild"
   },
   "dependencies": {
     "@dreamimd/imd-parser": "workspace:^",
