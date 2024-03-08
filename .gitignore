@@ -2,4 +2,3 @@ node_modules
 dist
 vitest-output
 rm
-.gitconfig
