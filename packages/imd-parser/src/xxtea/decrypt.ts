@@ -4,9 +4,9 @@ import {
   toBinaryString,
   toUint32Array,
 } from './_utils'
-import { utf8Encode } from './utf8Encode'
-import { utf8Decode } from './utf8Decode'
-import { xxatob } from './atob'
+import { utf8Encode } from './utf8-encode'
+import { utf8Decode } from './utf8-decode'
+import { atob } from './atob'
 
 export function decrypt(data: string, key: string) {
   if (data === undefined || data === null || data.length === 0)
@@ -31,5 +31,5 @@ export function decryptFromBase64(data: string, key: string) {
   if (data === undefined || data === null || data.length === 0)
     return data
 
-  return decrypt(xxatob(data), key)
+  return decrypt(atob(data), key)
 }

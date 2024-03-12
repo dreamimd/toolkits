@@ -1,11 +1,24 @@
-import type { ImdBasic, RmpMap } from './types'
+import type {
+  ImdBasic,
+  RmpMap,
+  RmpNote,
+} from './types'
+import { basicToFilename, resolveFilename } from './utils/filename'
+import { cloneDeep } from './utils/clone-deep'
 import {
-  basicToFilename,
   decryptRmp,
   encryptRmp,
   getSalt,
-  resolveFilename,
-} from './utils'
+} from './utils/secret'
+import {
+  isLineEnd,
+  isLineProcess,
+  isLineStart,
+  isSingleAction,
+} from './utils/imd-note-type'
+
+/** 轨道编号起始值 */
+const TRACK_START = 3
 
 export class IMD implements ImdBasic {
   /**
@@ -83,18 +96,27 @@ export class IMD implements ImdBasic {
       durationtime: 0,
       tracks: [],
     }
-    const trackStart = 3
     for (let i = 0; i < basic.keyNum; i++) {
       map.tracks.push({
-        track: trackStart + i,
+        track: TRACK_START + i,
         note: [],
       })
     }
     return IMD._fromRmpMap(basic, map)
   }
 
-  /** 谱面数据对象 */
-  map: RmpMap
+  /** 当前正在处理中的谱面数据对象 */
+  private map: RmpMap
+
+  /**
+   * 谱面动作索引。
+   *
+   * 初始化时，需要对 rmp 格式的谱面对象做预处理，生成动作索引。
+   *
+   * @key 每一个动作
+   * @value 该动作对应的完整持续动作
+   */
+  private _actionMap = new Map<RmpNote, RmpNote[]>()
 
   /** 谱面名称 */
   name: string
@@ -121,10 +143,132 @@ export class IMD implements ImdBasic {
     this.name = options.name
     this.difficulty = options.difficulty
     this.map = map
+    this.resolveMap()
+  }
+
+  /** 预处理谱面 */
+  private resolveMap() {
+    // 给每个按键标记上所在轨道
+    this.map.tracks.forEach((track) => {
+      track.note.forEach((note) => {
+        note._track = track.track
+        note._isResolved = false
+      })
+    })
+
+    // 拍平为按键列表，按照时间顺序排列
+    const notes = this.getFlatedNotes()
+
+    notes.forEach((note, index) => {
+      if (note._isResolved)
+        return
+
+      const lines = [note]
+      note._isResolved = true
+      this._actionMap.set(note, lines)
+      if (isSingleAction(note))
+        return
+
+      // 向后寻找完整的持续动作
+      let nextTrack = note.toTrack
+      let nextTick = note.tick + note.dur
+      for (let i = index + 1; i < notes.length; i++) {
+        const curNote = notes[i]
+
+        // 时间超限，寻找结束
+        if (curNote.tick > nextTick)
+          break
+
+        // 单键，跳过
+        if (isSingleAction(curNote))
+          continue
+
+        // 非目标轨道动作，跳过
+        if (curNote._track !== nextTrack)
+          continue
+
+        // 非法折线：持续动作尚未碰到 isEnd 就又遇到了持续动作的开头。兼容方式：跳过
+        if (isLineStart(curNote))
+          continue
+
+        // 非法折线：当前动作是长按，但是目标轨道的下一个动作时间不匹配。兼容方式：跳过
+        if (curNote.tick !== nextTick)
+          continue
+
+        // 合法折线，记录数据
+        curNote._isResolved = true
+        lines.push(curNote)
+        this._actionMap.set(curNote, lines)
+        nextTrack = curNote.toTrack
+        nextTick = curNote.tick + curNote.dur
+      }
+    })
+  }
+
+  /**
+   * 获取拍平后的按键列表，并按照时间顺序排列
+   * @param markIdx 是否在处理的过程中，按照排列顺序重新标记 idx
+   * @returns 拍平处理后的按键列表
+   */
+  getFlatedNotes(markIdx?: boolean) {
+    const result = this.map.tracks
+      .map(item => item.note)
+      .flat()
+      .sort((a, b) => {
+        const tickDelta = a.tick - b.tick
+        if (tickDelta === 0)
+          return Number(a._track) - Number(b._track)
+
+        return tickDelta
+      })
+
+    if (markIdx) {
+      result.forEach((item, index) => {
+        item.idx = index
+      })
+    }
+
+    return result
+  }
+
+  /** 对当前谱面进行排序 */
+  sortMap() {
+    this.getFlatedNotes(true)
+
+    // 对谱面进行排序
+    this.map.tracks.forEach((track) => {
+      track.note.sort((a, b) => {
+        const tickDelta = a.tick - b.tick
+        if (tickDelta === 0)
+          return Number(a._track) - Number(b._track)
+
+        return tickDelta
+      })
+    })
+  }
+
+  /** 获取谱面 map 对象，返回 map 对象前会进行排序处理 */
+  getMap() {
+    this.sortMap()
+    return this.map
+  }
+
+  /** 输出一份标准的谱面 map 对象 */
+  toMap() {
+    const mapClone = cloneDeep<RmpMap>(this.getMap())
+
+    // 去掉额外的数据
+    mapClone.tracks.forEach((track) => {
+      track.note.forEach((note) => {
+        delete note._track
+        delete note._isResolved
+      })
+    })
+    return mapClone
   }
 
   toRmpJson() {
-    return JSON.stringify(this.map)
+    return JSON.stringify(this.toMap())
   }
 
   toRmpRaw() {

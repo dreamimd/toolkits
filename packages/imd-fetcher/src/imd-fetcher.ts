@@ -29,7 +29,7 @@ export interface FetcherOptions {
    *
    * 需要填写歌曲的 path 值，而不是全名。
    * - 正例：beiduofenbingdu
-   * - 范例：贝多芬病毒
+   * - 反例：贝多芬病毒
    */
   target: string
 }
@@ -153,7 +153,7 @@ export class ImdFetcher {
     this.log('log', '下载完成：', url)
   }
 
-  async initConfigs() {
+  private async initConfigs() {
     await this.getVersion()
 
     this.log('log', '正在获取配置文件...')

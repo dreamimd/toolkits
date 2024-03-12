@@ -44,17 +44,61 @@ export interface RmpTrack {
 }
 
 export interface RmpNote {
+  /** 所有 Note 按时间顺序排列后的索引 */
   idx: number
+
+  /** 按键打击时间点，单位：tick */
   tick: number
-  key: number
-  dur: number
-  isEnd: number
-  toTrack: number
-  volume: number
-  pan: number
-  attr: number
+
+  /** 按键打击时间点，单位：ms */
   time: number
+
+  /**
+   * - 当前动作为长按时，为持续时间，单位：tick
+   * - 当前动作为点、滑时，为 0
+   */
+  dur: number
+
+  /**
+   * - 当前动作为长按时，为持续时间，单位：ms
+   * - 当前动作为点时，为 0
+   * - 当前动作为滑时，为轨道偏移值。左滑 x 轨: -x；右滑 x 轨：x
+   */
   time_dur: number
+
+  /** 当前动作是否为持续动作的结束 */
+  isEnd: number
+
+  /**
+   * - 当前动作为长按时，为当前轨道编号。
+   * - 当前动作为滑时，为动作滑向的轨道编号。
+   * - 当前动作为点时，为 0
+   */
+  toTrack: number
+
+  /**
+   * - 0: 单点
+   * - 3: 持续动作动作 开始
+   * - 4: 持续动作 进行中 / 结束
+   */
+  attr: number
+
+  /** 暂时没发现作用，永远为 0 */
+  key: number
+
+  /** 暂时没发现作用，永远为 0 */
+  volume: number
+
+  /** 暂时没发现作用，永远为 0 */
+  pan: number
+
+  // 以下带下划线的属性为计算处理谱面时临时添加，输出时要删去
+
+  /** 当前动作所在的轨道编号 */
+  _track?: number
+
+  /** 该动作是否完成预解析 */
+  _isResolved?: boolean
 }
 
 /** Imd 基本信息，从文件名中解析出 */
